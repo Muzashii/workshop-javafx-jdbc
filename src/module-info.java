@@ -3,6 +3,7 @@ module JavaFX {
 	requires javafx.fxml;
 	requires javafx.graphics;
 	requires java.sql;
+	requires javafx.base;
 	opens model.entities to javafx.graphics, javafx.fxml, javafx.base;
 	
 	exports gui;

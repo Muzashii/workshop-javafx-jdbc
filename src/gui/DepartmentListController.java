@@ -1,18 +1,27 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.util.Alerts;
+import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
@@ -40,12 +49,13 @@ public class DepartmentListController implements Initializable{
 	private ObservableList<Department> obslist;
 	
 	@FXML
-	public void onBtNewAction() {
-		System.out.println("OnBtNewAction");
+	public void onBtNewAction(@SuppressWarnings("exports") ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		createDialogForm("/gui/DepartmentForm.fxml", parentStage );
 	}
 	
 	//metodo certo de injetar dependencia
-	public void setDepartmentService(DepartmentService service) {
+	public void setDepartmentService(@SuppressWarnings("exports") DepartmentService service) {
 		this.service = service;
 
 	}
@@ -77,5 +87,29 @@ public class DepartmentListController implements Initializable{
 		obslist = FXCollections.observableArrayList(list);
 		tableViewDepartment.setItems(obslist);
 	}
-
+	//criar a janela de criaçao de departamento
+	private void createDialogForm(String AbsoluteName, Stage ParentStage) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(AbsoluteName));
+			Pane pane = loader.load();
+			
+			Stage dialogStage = new Stage();
+			//nome da janela
+			dialogStage.setTitle("Enter Department data");
+			//setando a nova janela
+			dialogStage.setScene(new Scene(pane));
+			//faz a janela nao ser redimencionada
+			dialogStage.setResizable(false);
+			
+			dialogStage.initOwner(ParentStage);
+			//faz a janela ser model(janela de fundo nao funciona ate ela ser fechada)
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			
+			dialogStage.showAndWait();
+			
+		}
+		catch(IOException e) {
+			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
+		}
+	}
 }
