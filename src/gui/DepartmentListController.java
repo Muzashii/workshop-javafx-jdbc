@@ -49,9 +49,10 @@ public class DepartmentListController implements Initializable{
 	private ObservableList<Department> obslist;
 	
 	@FXML
-	public void onBtNewAction(@SuppressWarnings("exports") ActionEvent event) {
+	public void onBtNewAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/DepartmentForm.fxml", parentStage );
+		Department obj = new Department();
+		createDialogForm(obj, "/gui/DepartmentForm.fxml", parentStage);
 	}
 	
 	//metodo certo de injetar dependencia
@@ -88,10 +89,14 @@ public class DepartmentListController implements Initializable{
 		tableViewDepartment.setItems(obslist);
 	}
 	//criar a janela de criaçao de departamento
-	private void createDialogForm(String AbsoluteName, Stage ParentStage) {
+	private void createDialogForm(Department obj,String AbsoluteName, Stage ParentStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(AbsoluteName));
 			Pane pane = loader.load();
+			
+			DepartmentFormController controller = loader.getController();
+			controller.setDepartment(obj);
+			controller.updateFormData();
 			
 			Stage dialogStage = new Stage();
 			//nome da janela
